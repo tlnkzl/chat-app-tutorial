@@ -10,6 +10,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
+import {CTX} from './Store';
+
 const useStyles = makeStyles(theme => ({
     root: {
         margin: '50px',
@@ -40,6 +42,12 @@ const useStyles = makeStyles(theme => ({
 export default function Dashboard() {
     const classes = useStyles();
 
+    // CTX store
+    const [allChats] = React.useContext(CTX);
+    const topics = Object.keys(allChats);
+
+    // local state
+    const [activeTopic, changeActiveTopic] = React.useState(topics[0]);
     const [textValue, changeTextValue] = React.useState('');
 
     return (
@@ -49,14 +57,14 @@ export default function Dashboard() {
                     Chat App
                 </Typography>
                 <Typography variant="h5" component="h5">
-                    Topic placeholder
+                    {activeTopic}
                 </Typography>
                 <div className={classes.flex}>
                     <div className={classes.topicsWindow}>
                         <List>
                             {
-                                ['topic'].map(topic => (
-                                    <ListItem key={topic} button>
+                                topics.map(topic => (
+                                    <ListItem onClick={e => changeActiveTopic(e.target.innerText)} key={topic} button>
                                         <ListItemText primary={topic} />
                                     </ListItem>
                                 ))
@@ -65,7 +73,7 @@ export default function Dashboard() {
                     </div>
                     <div className={classes.chatWindow}>
                             {
-                                [{from: 'user', msg: 'hello'}].map((chat, i) => (
+                                allChats[activeTopic].map((chat, i) => (
                                     <div className={classes.flex} key={i}>
                                         <Chip label={chat.from} className={classes.chip}></Chip>
                                         <Typography variant='subtitle1'> {chat.msg} </Typography>
